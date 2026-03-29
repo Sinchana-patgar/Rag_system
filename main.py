@@ -13,7 +13,7 @@ try:
     if "docs" not in st.session_state:
         st.info("Loading documents...")
 
-        loader = DirectoryLoader("data")
+        loader = DirectoryLoader("Docs")
         documents = loader.load()
 
         st.info("Splitting documents...")
