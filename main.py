@@ -8,7 +8,7 @@ from langchain_community.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from langchain_community.llms import HuggingFacePipeline
 
-st.set_page_config(page_title="Rag-system)
+st.set_page_config(page_title="Rag-system")
 
 st.title("🧠 A RAG system")
 
