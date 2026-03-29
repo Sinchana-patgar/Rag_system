@@ -21,7 +21,7 @@ pdf_path = "Docs/fabric onelake.pdf" # Make sure this file is in your GitHub!
 # --- 2. THE "BRAIN" (Embeddings) ---
 @st.cache_resource # This saves memory so it doesn't reload every click
 def load_vectorstore():
-    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     
     # If the database doesn't exist yet, create it on the fly
     if not os.path.exists(persist_dir):
@@ -41,27 +41,23 @@ def load_vectorstore():
     return vectorstore
 
 # --- 3. THE UI ---
-try:
-    vectorstore = load_vectorstore()
-    
-    user_question = st.text_input("Ask a question about the document:")
 
-    if user_question:
-        if not groq_api_key:
-            st.error("API Key missing! Please add GROQ_API_KEY to your Secrets.")
-        else:
-            llm = ChatGroq(model_name="llama3-70b-8192", groq_api_key=groq_api_key)
-            
-            # Retrieval
-            docs = vectorstore.similarity_search(user_question, k=3)
-            context = "\n".join([d.page_content for d in docs])
-            
-            # Final Chain
-            prompt = f"Context: {context}\n\nQuestion: {user_question}\nAnswer:"
-            response = llm.invoke(prompt)
-            
-            st.subheader("Response:")
-            st.write(response.content)
+try:
+    st.info("Loading embedding model...")
+    
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
+
+    st.info("Creating vector database...")
+    
+    vectorstore = Chroma.from_documents(
+        docs,
+        embeddings,
+        persist_directory="/tmp/chroma_db"
+    )
+
+    st.success("Setup complete!")
 
 except Exception as e:
-    st.error(f"An error occurred: {e}")
+    st.error(f"Error during setup: {e}")
