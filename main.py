@@ -4,7 +4,7 @@ from langchain_groq import ChatGroq
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.text_splitters import RecursiveCharacterTextSplitter
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -15,7 +15,7 @@ st.title("🧠 Gen Z Cognitive Engagement Platform")
 
 # Get API Key from Environment (Local .env or Streamlit Secrets)
 groq_api_key = os.getenv("GROQ_API_KEY")
-persist_dir = r"\D:\RAG\Vector"
+persist_dir = "Vector"
 pdf_path = "Docs/fabric onelake.pdf" # Make sure this file is in your GitHub!
 
 # --- 2. THE "BRAIN" (Embeddings) ---
