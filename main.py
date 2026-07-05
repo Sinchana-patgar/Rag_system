@@ -4,11 +4,11 @@ import os
 
 os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
 
-# ── UPDATED IMPORTS (non-deprecated) ─────────────────────────────────────────
+# ──  IMPORTS (non-deprecated) ─────────────────────────────────────────
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings          # ✅ was langchain_community
-from langchain_chroma import Chroma                               # ✅ was langchain_community
+from langchain_huggingface import HuggingFaceEmbeddings          # was langchain_community
+from langchain_chroma import Chroma                               
 from groq import Groq
 
 # ── PAGE CONFIG ───────────────────────────────────────────────────────────────
@@ -60,8 +60,8 @@ with st.sidebar:
         st.rerun()
 
 # ── HEADER ────────────────────────────────────────────────────────────────────
-st.markdown('<p class="rag-title">🧠 RAG System</p>', unsafe_allow_html=True)
-st.markdown('<p class="rag-subtitle">// Retrieval-Augmented Generation · Groq LLaMA 3 · PDF Knowledge Base</p>', unsafe_allow_html=True)
+st.markdown('<p class="rag-title">RAG System</p>', unsafe_allow_html=True)
+st.markdown('<p class="rag-subtitle"> Retrieval-Augmented Generation · Groq LLaMA 3 · PDF Knowledge Base</p>', unsafe_allow_html=True)
 
 if not groq_api_key:
     st.info("👈 Enter your **Groq API key** in the sidebar to start.")
@@ -74,7 +74,7 @@ if not uploaded_files:
 # ── RAG PIPELINE ──────────────────────────────────────────────────────────────
 try:
     file_names = sorted([f.name for f in uploaded_files])
-    chunk_cfg  = (chunk_size, chunk_overlap)      # ✅ track chunk settings too
+    chunk_cfg  = (chunk_size, chunk_overlap)      # track chunk settings to
 
     # Invalidate cache when files OR chunk settings change
     if (st.session_state.get("loaded_files") != file_names or
@@ -111,7 +111,7 @@ try:
                 model_name="all-MiniLM-L6-v2"
             )
 
-    # 3. Vector Store — ✅ give Chroma a real persist directory
+    # 3. Vector Store — give Chroma a real persist directory
     if "vectorstore" not in st.session_state:
         with st.spinner("🗄️ Building vector database…"):
             chroma_dir = tempfile.mkdtemp()          # persists for the session
@@ -119,7 +119,7 @@ try:
             st.session_state.vectorstore = Chroma.from_documents(
                 documents=st.session_state.docs,
                 embedding=st.session_state.embeddings,
-                persist_directory=chroma_dir,        # ✅ required in newer Chroma
+                persist_directory=chroma_dir,        # required in newer Chroma
             )
 
     # 4. Stats bar
@@ -151,7 +151,7 @@ try:
                     f'{src.page_content}</div>', unsafe_allow_html=True
                 )
 
-    # ✅ Use st.chat_input instead of a form — avoids rerun/double-submit race
+    
     query = st.chat_input("What would you like to know?")
 
     if query and query.strip():
@@ -159,7 +159,7 @@ try:
             results = st.session_state.vectorstore.similarity_search(query, k=top_k)
             context = "\n\n---\n\n".join([doc.page_content for doc in results])
 
-            # ✅ Groq client created once per query (api_key may change between runs)
+            # Groq client created once per query (api_key may change between runs)
             client = Groq(api_key=groq_api_key)
             chat_completion = client.chat.completions.create(
                 model=model_name,
